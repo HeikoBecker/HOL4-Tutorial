@@ -1,0 +1,225 @@
+\documentclass[10pt]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+\usepackage[backend=biber]{biblatex}
+\addbibresource{references.bib}
+
+\usepackage{alltt}
+
+\usepackage{holtexbasic}
+\usepackage{holtex}
+
+\usepackage{environ}
+\NewEnviron{holthmenv}{%
+  \[
+    \scalebox{1.0}{\normalsize\rmfamily\color[rgb]{0,0,0}
+      \begin{minipage}[c]{\textwidth}
+      \begin{array}[t]{l}
+        \BODY
+      \end{array}
+    \end{minipage}}
+  \]}
+
+\usepackage{listings}
+
+\usepackage{hyperref}
+\usepackage{todonotes}
+\newcommand{\heiko}[1]{\todo[inline,author=Heiko,bordercolor=red!20,color=orange!20]{#1}}
+\newcommand{\ekey}[1]{\texttt{#1}}
+
+\title{A Programmer's Guide to Proving Theorems with HOL4}
+\author{Anonymous}
+\date{}
+
+\begin{document}
+\maketitle{}
+
+\paragraph*{Summary}
+Interactive theorem proving is a method to perform trustworthy, rigorous
+mathematical proofs checked by computers.
+From a programmer's point of view, learning an ITP system is similar to
+learning a new programming language.
+The main difference being that an ITP system is not only used to implement
+a particular system, but also to prove theorems about it.
+This guide is written for experienced programmers, that have done so-called
+pen-and-paper proofs before, but never worked with any ITP system.
+If you ever wanted to replace that nice, cozy thought of \emph{this function
+should work as I intend it to} with the high-assurance of a rigorous
+mathematical proof, this guide is for you\footnote{If you are asking yourself the question how this is even possible, the same reasoning applies.}.
+
+\section{Introduction/Setup}
+%
+As with any programming language, picking up an ITP system first requires
+installing the system.
+In this guide we use the HOL4~\cite{HOL4web} theorem prover developed by ....
+The guide also uses a tool called \emph{Lassie} which makes learning HOL4 easier
+for newcomers.
+
+Thus, following this guide requires installations of \texttt{polyML v5.7.1},
+\texttt{Apache Ant v.1.9.9}, and \texttt{ruby 2.3.3}.
+We provide a setup script that makes sure all the dependencies are installed,
+and downloads and installs the latest versions of HOL4 and Lassie with this
+guide (\url{https://todo.mpi-sws.org}).
+Running the setup script will also set the variables \texttt{HOLDIR}, and
+\texttt{LASSIEDIR} once, but they must always be set to the directory to which
+HOL4, respectively Lassie was cloned, before running HOL4.
+
+\subsection{Running HOL4}
+
+We will explaining using HOL4 using the emacs editor.
+There exist also plugins for vim, and Sublime text.
+
+To interact with HOL4 within emacs, it suffices to append the following lines to
+the \texttt{.emacs} file:
+\begin{lstlisting}
+(load-file "<HOLDIR>/tools/hol-unicode.el")
+(load-file "<HOLDIR>/tools/hol-input.el")
+(load-file "<HOLDIR>/tools/holscript-mode.el")
+(load-file "<HOLDIR>/tools/hol-mode.el")
+\end{lstlisting}
+
+In general, HOL4 files always end with the suffix \verb!Script.sml!.
+For example, a theory about natural numbers should be called
+\verb!naturalNumbersScript.sml!.
+In HOL4 speak, these files are called \emph{script files}.
+
+After opening a script file in emacs, HOL4 is started by presssing
+\ekey{M-h H}.
+emacs will then interactively prompt for a position of the HOL4
+read-eval-print loop (REPL).
+
+\section{Interacting with the HOL4 REPL}
+
+After starting the HOL4 REPL, code is send via \ekey{M-h r}.
+The HOL4 REPL is an extended version of the polyML REPL, and as such can be like
+the REPL's of other interpreted languages like e.g. ruby and python.
+
+For example, running
+\begin{lstlisting}
+  3 + 5;
+\end{lstlisting}
+
+should result in the following output:
+\begin{lstlisting}
+> 3+5;
+val it = 8: int
+\end{lstlisting}
+
+All of the functionality of the polyML REPL, and in general, the Standard ML
+basis library (see e.g. \url{https://smlfamily.github.io/Basis/} for a reference)
+are available in the HOL4 REPL.
+Thus allowing simple creation, manipulation of lists, strings, options, and
+simple I/O.
+
+\section{A First (Pen-and-Paper Style) Proof}
+%
+The HOL4 features presented are exactly the same as for any other interpreted
+programming language.
+Next, we will turn to defining our first function in HOL4, and proving a first
+theorem.
+
+Take function \verb!sum n!, summing up the numbers from $0$ to $n$.
+In HOL4 this function is defined by the code:
+\begin{lstlisting}
+Definition sum_def:
+  sum n = if (n = 0) then 0 else n + sum (n-1)
+End
+\end{lstlisting}
+
+Alternatively, HOL4 also supports defining a function by a system of equations,
+moving the \texttt{case} expression of the \verb!sum! function to the outside:
+\begin{lstlisting}
+Definition sum_def:
+  sum 0 = 0 /\
+  sum n = n + sum (n-1)
+End
+\end{lstlisting}
+
+Choosing one over the other has different benefits.
+As a rule of thumb, it is recommended to prefer the system of equations if
+the function could be implemented with a top-level \texttt{case} expression.
+
+As a simple, first example, we will prove the closed form for summing $n$ numbers, also known as the gaussian sum:
+\[
+  \sum_{i=0}^{n} i = \frac{n * (n + 1)}{2}
+\]
+
+In HOL4 this goal this theorem is stated as
+\begin{alltt}
+Theorem gaussian_sum:
+  ! n. sum n = n * (n + 1) DIV 2
+Proof
+QED
+\end{alltt}
+
+Marking the center line and running \ekey{M-h g}
+we start an interactive HOL4 proof, and the REPL shows:
+
+\begin{lstlisting}[mathescape=true]
+> val it =
+   Proof manager status: 1 proof.
+   1. Incomplete goalstack:
+        Initial goal:
+        $\forall$n. sum n = n * (n + 1) DIV 2
+   : proofs
+\end{lstlisting}
+
+In HOL4, theorems are proven by applying so-called \emph{tactics} to the goal
+until the proof is finished.
+To make it easier to pick up HOL4, we perform the first proof with Lassie, which
+allows us to prove the theorem using natural language.
+
+First, we load the Lassie library by running \lstinline{open LassieLib;} and
+loading the jargon for performing mathematical proofs
+(\lstinline{val _ = LassieLib.loadJargon "Arithmetic";}).
+
+Following the intuition of a rigorous mathematical proof, we start a proof by
+induction:
+\begin{lstlisting}
+nltac `Induction on 'n'.`
+\end{lstlisting}
+
+Here, \lstinline{nltac} is Lassie's function for parsing natural language and translating it into a HOL4 tactic.
+The parameter \lstinline{`Induction on 'n'.`} is the actual tactic being applied.
+To apply the tactic, the text must be marked and run with \ekey{M-h e}.
+After running the code, the HOL4 REPL shows
+\begin{lstlisting}
+TODO
+\end{lstlisting}
+
+As for a pen-and-paper proof, the base case of the induction is trivial, and
+solved with the tactic \lstinline{nltac `simplify.`}, leaving us only with the
+second goal from above.
+
+As for a pen-and-paper proof, the first step on the inductive case is to
+simplify:
+\begin{lstlisting}
+nltac `simplify with [GSYM ADD_DIV_ADD_DIV, GSYM DIV2_def].`
+\end{lstlisting}
+
+Here, \lstinline{ADD_DIV_ADD_DIV} and \lstinline{DIV2_def} are theorems that are
+used to enrich the simplifier with the additional theorems.
+To find out their statements, mark the theorem names only, and send them to the
+REPL with \ekey{M-h r}.
+Sending \lstinline{GSYM} to the REPL shows that the function has type
+\lstinline{:thm -> thm}, meaning that it takes a theorem as input and returns a
+theorem.
+Sending \lstinline{GSYM DIV2_def} and \lstinline{DIV2_def} to the REPL, one can
+quickly see that \lstinline{GSYM} flips equalities in theorems.
+This is sometimes useful as rewriting in HOL4 is directed from left-to-right.
+If we have a theorem showing $f x = b$, HOL4 will simplify any occurence of
+$f x$ into an occurence of $b$, but it will never replace occurences of $b$
+with occurences of $f x$.
+
+%   it suffices to show that the arguments are equal.
+%   show 'SUC n * (SUC n + 1) = (SUC n + 1) + n * (SUC n + 1)' using (simplify with [MULT_CLAUSES]).
+%   simplify.
+%   show 'n * (n + 1) = SUC n * n' using (trivial using [MULT_CLAUSES, MULT_SYM]).
+%   simplify.’
+
+\section{References}
+\printbibliography
+
+\end{document}
