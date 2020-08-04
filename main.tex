@@ -22,6 +22,31 @@
     \end{minipage}}
   \]}
 
+\usepackage[scaled=0.8]{beramono}  % our monospace font
+\usepackage[T1]{fontenc}  % this is necessary for beramo to work
+
+\usepackage{listings}
+
+\lstdefinelanguage{hol4}{
+  %alsoletter={@=>},
+  morekeywords={
+     Definition, End, Theorem, Proof, QED},
+  %  fun, let, val, in, end, if, then, else, case, of},
+  %sensitive=true,
+  %morecomment=[l]{//},
+  morecomment=[s]{(*}{*)},
+  commentstyle=\color{gray},
+  showstringspaces=false,
+  columns=fullflexible,
+  mathescape=true,
+  numberstyle=\tiny,
+  basicstyle=\ttfamily,
+  numbersep=5pt,
+  stepnumber=2,
+  numbers=none,                   % where to put the line-numbers
+  morestring=[b]"
+}
+\lstset{language=hol4, breaklines=true}
 \usepackage{listings}
 
 \usepackage{hyperref}
@@ -41,10 +66,10 @@ Interactive theorem proving is a method to perform trustworthy, rigorous
 mathematical proofs checked by computers.
 From a programmer's point of view, learning an ITP system is similar to
 learning a new programming language.
-The main difference being that an ITP system is not only used to implement
-a particular system, but also to prove theorems about it.
-This guide is written for experienced programmers, that have done so-called
-pen-and-paper proofs before, but never worked with any ITP system.
+The main difference an ITP system allows to first implement a function,
+and then prove theorems about it.
+This guide is written for experienced programmers, that have seen pen-and-paper
+proofs before, but never worked with an ITP system.
 If you ever wanted to replace that nice, cozy thought of \emph{this function
 should work as I intend it to} with the high-assurance of a rigorous
 mathematical proof, this guide is for you\footnote{If you are asking yourself the question how this is even possible, the same reasoning applies.}.
@@ -53,56 +78,70 @@ mathematical proof, this guide is for you\footnote{If you are asking yourself th
 %
 As with any programming language, picking up an ITP system first requires
 installing the system.
-In this guide we use the HOL4~\cite{HOL4web} theorem prover developed by ....
-The guide also uses a tool called \emph{Lassie} which makes learning HOL4 easier
-for newcomers.
+In this guide we use the HOL4~\cite{HOL4web} theorem prover.
+The guide also uses a tool called \emph{Lassie}, equipping HOL4 with training
+wheels.
 
-Thus, following this guide requires installations of \texttt{polyML v5.7.1},
-\texttt{Apache Ant v.1.9.9}, and \texttt{ruby 2.3.3}.
+To follow this guide, \texttt{polyML}, \texttt{Apache Ant}, and \texttt{ruby}
+must be installed.
+For \texttt{polyML}, we recommend downloading the latest version from git
+(\url{https://github.com/polyml/polyml}).
+Both \texttt{Apache Ant}, and \texttt{ruby} can be installed through the system
+package manager.
 We provide a setup script that makes sure all the dependencies are installed,
 and downloads and installs the latest versions of HOL4 and Lassie with this
-guide (\url{https://todo.mpi-sws.org}).
-Running the setup script will also set the variables \texttt{HOLDIR}, and
-\texttt{LASSIEDIR} once, but they must always be set to the directory to which
-HOL4, respectively Lassie was cloned, before running HOL4.
+guide (\url{https://people.mpi-sws.org/~hbecker/setupHOL4.sh}).
+Running the setup script temporarily sets the variables \texttt{HOLDIR}, and
+\texttt{LASSIEDIR} to the directories where HOL4 and Lassie have been installed.
+To use both tools later, these variables must be be configured permanently
+before running HOL4.
 
 \subsection{Running HOL4}
 
-We will explaining using HOL4 using the emacs editor.
-There exist also plugins for vim, and Sublime text.
+We will explain how to interact using HOL4 using the emacs editor.
+There also exist plugins for the vim, and Sublime text editors, and the overall
+interaction is the same, only the keybindings may change.
 
 To interact with HOL4 within emacs, it suffices to append the following lines to
-the \texttt{.emacs} file:
+the emacs configuration file:
 \begin{lstlisting}
-(load-file "<HOLDIR>/tools/hol-unicode.el")
-(load-file "<HOLDIR>/tools/hol-input.el")
-(load-file "<HOLDIR>/tools/holscript-mode.el")
-(load-file "<HOLDIR>/tools/hol-mode.el")
+(load-file "<HOL install dir>/tools/hol-unicode.el")
+(load-file "<HOL install dir>/tools/hol-input.el")
+(load-file "<HOL install dir>/tools/holscript-mode.el")
+(load-file "<HOL install dir>/tools/hol-mode.el")
 \end{lstlisting}
 
-In general, HOL4 files always end with the suffix \verb!Script.sml!.
-For example, a theory about natural numbers should be called
-\verb!naturalNumbersScript.sml!.
-In HOL4 speak, these files are called \emph{script files}.
+After loading the files, respectively restarting emacs, HOL4 files will by
+default open in the HOL4 mode.
 
+In general, HOL4 files always end with the suffix \texttt{Script.sml}.
+For example, a theory about natural numbers is called
+\texttt{naturalNumbersScript.sml}
+In HOL4 speak, files ending with \texttt{Script.sml} are called \emph{script files}.
+
+To interact with HOL4 we must first star ta read-eval-print loop (REPL), similar
+to interpreter of programming languages like ruby or python.
 After opening a script file in emacs, HOL4 is started by presssing
 \ekey{M-h H}.
-emacs will then interactively prompt for a position of the HOL4
-read-eval-print loop (REPL).
+emacs will then interactively prompt for a position of the HOL4 REPL.
 
 \section{Interacting with the HOL4 REPL}
 
-After starting the HOL4 REPL, code is send via \ekey{M-h r}.
-The HOL4 REPL is an extended version of the polyML REPL, and as such can be like
-the REPL's of other interpreted languages like e.g. ruby and python.
+The HOL4 REPL is an extended version of the polyML~\cite{polymlweb} REPL, and
+behaves like the REPL's of other interpreted languages.
+After starting the HOL4 REPL, code is send with the keybinding \ekey{M-h r}.
 
-For example, running
+For example, type
 \begin{lstlisting}
   3 + 5;
 \end{lstlisting}
 
-should result in the following output:
-\begin{lstlisting}
+anywhere in the current script file, highlight it with emacs highlighting
+command (\ekey{C-space}, then arrow keys for marking) and send it to the REPL
+with \ekey{M-h r}.
+
+The REPL should print:
+\begin{lstlisting}[frame=single]
 > 3+5;
 val it = 8: int
 \end{lstlisting}
@@ -110,114 +149,266 @@ val it = 8: int
 All of the functionality of the polyML REPL, and in general, the Standard ML
 basis library (see e.g. \url{https://smlfamily.github.io/Basis/} for a reference)
 are available in the HOL4 REPL.
-Thus allowing simple creation, manipulation of lists, strings, options, and
+Thus HOL4 supports creating and manipulating lists, strings, options, and
 simple I/O.
 
 \section{A First (Pen-and-Paper Style) Proof}
 %
-The HOL4 features presented are exactly the same as for any other interpreted
+The HOL4 features presented so far are exactly those of an interpreted
 programming language.
-Next, we will turn to defining our first function in HOL4, and proving a first
-theorem.
+Next, we will define our first function in HOL4, and prove a first theorem about
+it.
 
-Take function \verb!sum n!, summing up the numbers from $0$ to $n$.
-In HOL4 this function is defined by the code:
+A common mathematical notation is $\sum_{i=0}^n f (i)$,
+summing the numbers from $0$ to $n$, and applying function $f$.
+We define a specialized version for $f (x) = x$ in HOL4:
+
 \begin{lstlisting}
 Definition sum_def:
   sum n = if (n = 0) then 0 else n + sum (n-1)
 End
 \end{lstlisting}
 
+The \lstinline{Definition} and \lstinline{End} keyword tell the REPL that we
+define a HOL4 function and mark its end.
+In the REPL, \lstinline{sum_def} is the name of the definition, under which it
+can be accessed.
+As a convention, when defining function $f$ in HOL4, its definition should be
+named \lstinline{f_def}.
+
 Alternatively, HOL4 also supports defining a function by a system of equations,
-moving the \texttt{case} expression of the \verb!sum! function to the outside:
+moving the \texttt{case} expression of the \lstinline{sum} function to the
+outside:
 \begin{lstlisting}
-Definition sum_def:
-  sum 0 = 0 /\
-  sum n = n + sum (n-1)
+Definition sumEq_def:
+  sumEq 0 = 0 /\
+  sumEq n = n + sum (n-1)
 End
 \end{lstlisting}
 
-Choosing one over the other has different benefits.
-As a rule of thumb, it is recommended to prefer the system of equations if
-the function could be implemented with a top-level \texttt{case} expression.
+To avoid a name clash we have renamed the function into lstinline{sumEq}.
+Choosing one definition over the other has different benefits and downsides.
+As a rule of thumb, it is recommended to choose the latter version, giving a
+system of equations if the function requires a top-level \texttt{case}
+expression.
 
-As a simple, first example, we will prove the closed form for summing $n$ numbers, also known as the gaussian sum:
+As a simple, first example, we will prove a closed form for \lstinline{sum n},
+known as the gaussian sum:
 \[
   \sum_{i=0}^{n} i = \frac{n * (n + 1)}{2}
 \]
 
-In HOL4 this goal this theorem is stated as
-\begin{alltt}
+In HOL4 this theorem is stated as
+
+\begin{lstlisting}
 Theorem gaussian_sum:
   ! n. sum n = n * (n + 1) DIV 2
 Proof
 QED
-\end{alltt}
+\end{lstlisting}
 
-Marking the center line and running \ekey{M-h g}
-we start an interactive HOL4 proof, and the REPL shows:
+Again, \lstinline{Theorem}, \lstinline{Proof}, and \lstinline{QED} are the
+keywords marking a theorem statement in the REPL and the indented line is
+the statement that we want to prove.
+Similar to a definition, the name \lstinline{gaussian_sum} is an identifier
+which is used later to refer to the theorem statement proven in other proofs.
+This makes theorems first class citizens of the HOL4 REPL, also allowing
+functions to manipulate and inspect their statements.
 
-\begin{lstlisting}[mathescape=true]
+When proving a theorem for the first time in HOL4, the proof is usually done
+interactively.
+Starting an interactive proof is as simple as marking the indented line
+(\lstinline{! n. sum n = n * (n + 1) DIV 2}) and pressing \ekey{M-h g}.
+The HOL4 REPL prints
+
+\begin{lstlisting}[mathescape=true, frame=single]
 > val it =
    Proof manager status: 1 proof.
    1. Incomplete goalstack:
         Initial goal:
-        $\forall$n. sum n = n * (n + 1) DIV 2
+        $\forall$ n. sum n = n * (n + 1) DIV 2
    : proofs
 \end{lstlisting}
 
-In HOL4, theorems are proven by applying so-called \emph{tactics} to the goal
-until the proof is finished.
-To make it easier to pick up HOL4, we perform the first proof with Lassie, which
-allows us to prove the theorem using natural language.
+In HOL4, theorems are proven by applying so-called \emph{tactics} to the current
+goal.
+These tactics are a group of SML functions, implemented in the HOL4
+distribution, and filled in between the \lstinline{Proof} and the \lstinline{QED}
+keywords.
+In this tutorial, we decouple learning how the theorem prover works from
+learning the syntax of the tactics language by performing interactive proofs
+with Lassie using natural language.
 
-First, we load the Lassie library by running \lstinline{open LassieLib;} and
-loading the jargon for performing mathematical proofs
-(\lstinline{val _ = LassieLib.loadJargon "Arithmetic";}).
+To load Lassie and the natural language descriptions required for the proof,
+run
+\begin{lstlisting}
+open LassieLib;
+val _ = LassieLib.loadJargon "Arithmetic";
+\end{lstlisting}
+interactively.
 
-Following the intuition of a rigorous mathematical proof, we start a proof by
-induction:
+The gaussian sum is the standard example for proofs by induction in math classes.
+Following this example, we start the proof with
 \begin{lstlisting}
 nltac `Induction on 'n'.`
 \end{lstlisting}
 
-Here, \lstinline{nltac} is Lassie's function for parsing natural language and translating it into a HOL4 tactic.
-The parameter \lstinline{`Induction on 'n'.`} is the actual tactic being applied.
-To apply the tactic, the text must be marked and run with \ekey{M-h e}.
+Here, \lstinline{nltac} is a Lassie function that parses natural language and
+translates it into a HOL4 tactic.
+The parameter \lstinline{`Induction on 'n'.`} is the natural language
+description of the tactic used.
+To apply the tactic, the line must be marked and run with \ekey{M-h e}.
 After running the code, the HOL4 REPL shows
 \begin{lstlisting}
-TODO
+> OK..
+2 subgoals:
+val it =
+
+    0.  sum n = n * (n + 1) DIV 2
+   ------------------------------------
+        sum (SUC n) = SUC n * (SUC n + 1) DIV 2
+
+   sum 0 = 0 * (0 + 1) DIV 2
+
+2 subgoals
+   : proof
 \end{lstlisting}
+
+The line \lstinline{2 subgoals} tells us that we must prove two separate goals
+to finish the proof.
+As HOL4 keeps track of these subgoals for us, we need not manage them manually
+to make sure that the proof remains error-free.
+Note that in the induction step, HOL4 automatically adds the inductive
+hypothesis as an assumption (labeled with \lstinline{0}) above a dashed line.
+
+First, we prove the base case \lstinline{sum 0 = 0 * (0 + 1) DIV 2}, then we
+show the induction step \lstinline{sum (n + 1) = (n + 1) * (n + 2) DIV 2}.
+Function \lstinline{SUC} is the HOL4 version of Peano's successor function.
+Intuitively \lstinline{SUC n} refers to the natural number after \lstinline{n},
+i.e \lstinline{n + 1}.
 
 As for a pen-and-paper proof, the base case of the induction is trivial, and
-solved with the tactic \lstinline{nltac `simplify.`}, leaving us only with the
-second goal from above.
+solved with the simple statement \lstinline{nltac `simplify with [sum_def].`},
+leaving us only with the induction step from above.
+In contrast to a pen-and-paper proof, we have to explicitly state that we
+simplify with the definition of our summation function (\lstinline{sum_def}).
+This is part of the enforced rigour required by the theorem prover\footnote{
+We will show in \autoref{todo} how one can get rid of this in certain cases.}.
 
-As for a pen-and-paper proof, the first step on the inductive case is to
+As for a pen-and-paper proof, the first step on the induction step is to
 simplify:
 \begin{lstlisting}
-nltac `simplify with [GSYM ADD_DIV_ADD_DIV, GSYM DIV2_def].`
+nltac `simplify with [sum_def, GSYM ADD_DIV_ADD_DIV, GSYM DIV2_def].`
 \end{lstlisting}
 
-Here, \lstinline{ADD_DIV_ADD_DIV} and \lstinline{DIV2_def} are theorems that are
-used to enrich the simplifier with the additional theorems.
+Here, \lstinline{ADD_DIV_ADD_DIV} and \lstinline{DIV2_def} are theorems from the
+HOL4 standard library used to enrich the simplifier with the additional
+knowledge.
 To find out their statements, mark the theorem names only, and send them to the
 REPL with \ekey{M-h r}.
 Sending \lstinline{GSYM} to the REPL shows that the function has type
 \lstinline{:thm -> thm}, meaning that it takes a theorem as input and returns a
 theorem.
+Function \lstinline{GSYM} is a polyML function rotating an equality theorem,
+replacing equality $a = b$ with equality $b = a$.
 Sending \lstinline{GSYM DIV2_def} and \lstinline{DIV2_def} to the REPL, one can
-quickly see that \lstinline{GSYM} flips equalities in theorems.
-This is sometimes useful as rewriting in HOL4 is directed from left-to-right.
-If we have a theorem showing $f x = b$, HOL4 will simplify any occurence of
+observe its effect easily.
+
+Using \lstinline{GSYM} can be useful from time to time as rewriting in HOL4 is
+directed from left-to-right.
+If we have a theorem showing $f x = b$, HOL4 will rewrite any occurence of
 $f x$ into an occurence of $b$, but it will never replace occurences of $b$
 with occurences of $f x$.
 
-%   it suffices to show that the arguments are equal.
-%   show 'SUC n * (SUC n + 1) = (SUC n + 1) + n * (SUC n + 1)' using (simplify with [MULT_CLAUSES]).
-%   simplify.
-%   show 'n * (n + 1) = SUC n * n' using (trivial using [MULT_CLAUSES, MULT_SYM]).
-%   simplify.’
+After applying the tactic, the REPL will show the subgoal that remains to be proven:
+\begin{lstlisting}
+> OK..
+1 subgoal:
+val it =
+
+    0.  sum n = DIV2 (n * (n + 1))
+   ------------------------------------
+        DIV2 (2 * SUC n + n * (n + 1)) = DIV2 (SUC n * (SUC n + 1))
+
+   : proof
+\end{lstlisting}
+
+Here, function \lstinline{DIV2} is just an abbreviation alternative definition
+of division by two.
+
+Applying the following tactics step-by-step closes the proof:
+
+\begin{lstlisting}
+nltac `it suffices to show that the arguments are equal.`
+nltac `show 'SUC n * (SUC n + 1) = (SUC n + 1) + n * (SUC n + 1)'
+         using (simplify with [MULT_CLAUSES]).`
+nltac `simplify.`
+nltac `show 'n * (n + 1) = SUC n * n' using (trivial using [MULT_CLAUSES, MULT_SYM]).`
+nltac `simplify.`
+\end{lstlisting}
+
+\begin{sloppypar}
+The natural language tactic \lstinline{`show 'SUC n * (SUC n + 1) = (SUC n + 1) + n * (SUC n + 1)' using (simplify with [MULT_CLAUSES]).`}
+shows another feature of HOL4:
+We can extend the list of assumptions with the theorem mentioned after
+\lstinline{show}.
+Before running the tactic, the state of the goal is
+\end{sloppypar}
+\begin{lstlisting}
+> OK..
+1 subgoal:
+val it =
+
+    0.  sum n = DIV2 (n * (n + 1))
+   ------------------------------------
+        2 * SUC n + n * (n + 1) = SUC n * (SUC n + 1)
+
+   : proof
+\end{lstlisting}
+
+and after running the tactic, the subgoal becomes
+\begin{lstlisting}
+> OK..
+1 subgoal:
+val it =
+
+    0.  sum n = DIV2 (n * (n + 1))
+    1.  SUC n * (SUC n + 1) = SUC n + 1 + n * (SUC n + 1)
+   ------------------------------------
+        2 * SUC n + n * (n + 1) = SUC n * (SUC n + 1)
+
+   : proof
+\end{lstlisting}
+
+Running all tactics, one after another, the REPL shows that the proof is finished by printiting
+\begin{lstlisting}
+> OK..
+
+val it =
+   Initial goal proved.
+   ⊢ ∀n. sum n = n * (n + 1) DIV 2: proof
+\end{lstlisting}
+
+To reuse the theorem later, and to make it automatically checkable by HOL4, we
+have to put the natural language into a single call to \lstinline{nltac}.
+The full code for the theorme is thus
+\begin{lstlisting}[mathescape=true]
+Theorem gaussian_sum:
+  $\forall$ n. sum n = (n * (n + 1)) DIV 2
+Proof
+  nltac ‘
+   Induction on 'n'. simplify.
+   simplify with [GSYM ADD_DIV_ADD_DIV, GSYM DIV2_def].
+   it suffices to show that the arguments are equal.
+   show 'SUC n * (SUC n + 1) = (SUC n + 1) + n * (SUC n + 1)' using (simplify with [MULT_CLAUSES]).
+   simplify.
+   show 'n * (n + 1) = SUC n * n' using (trivial using [MULT_CLAUSES, MULT_SYM]).
+   simplify.’
+QED
+\end{lstlisting}
+
+Marking the complete statement, and running it with \ekey{M-h r} will save the
+theorem under the name \lstinline{gaussian_sum}.
 
 \section{References}
 \printbibliography
