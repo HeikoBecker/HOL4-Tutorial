@@ -10,9 +10,9 @@ cd $BASEDIR
 #apt-get install -y build-essential aspcud m4 wget unzip git curl ant ruby openjdk-8-jdk
 
 # Install polyml from git
-#git clone https://github.com/polyml/polyml.git polyml && \
-#    cd polyml && \
-#    ./configure --prefix=/usr && make && make compiler && make install
+git clone https://github.com/polyml/polyml.git polyml && \
+    cd polyml && \
+    ./configure --prefix=/usr && make && make compiler && make install
 
 # Install HOL3
 cd $BASEDIR && \
