@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #FIXME: Change to your local installation/git repository folder
-BASEDIR=/opt/
+BASEDIR=/opt/test/
 
 cd $BASEDIR
 
@@ -10,11 +10,11 @@ cd $BASEDIR
 #apt-get install -y build-essential aspcud m4 wget unzip git curl ant ruby openjdk-8-jdk
 
 # Install polyml from git
-git clone https://github.com/polyml/polyml.git polyml && \
-    cd polyml && \
-    ./configure --prefix=/usr && make && make compiler && make install
+#git clone https://github.com/polyml/polyml.git polyml && \
+#    cd polyml && \
+#    ./configure --prefix=/usr && make && make compiler && make install
 
-# Install HOL4
+# Install HOL3
 cd $BASEDIR && \
     git clone https://github.com/HOL-Theorem-Prover/HOL HOL && \
     cd HOL && git checkout master &&\
