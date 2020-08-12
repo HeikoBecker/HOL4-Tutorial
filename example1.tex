@@ -237,7 +237,9 @@ val it =
 
 To reuse the theorem later, and to make it automatically checkable by HOL4, we
 have to put the natural language into a single call to \lstinline{nltac}.
-The full code for the theorme is thus
+The full code for the theorme is given in \autoref{fig:gaussProof}.
+%
+\begin{figure}[t]
 \begin{lstlisting}[mathescape=true]
 Theorem gaussian_sum:
   $\forall$ n. sum n = (n * (n + 1)) DIV 2
@@ -252,6 +254,8 @@ Proof
    simplify;`
 QED
 \end{lstlisting}
+\caption{Complete proof of the gaussian sum using Lassie}\label{fig:gaussProof}
+\end{figure}
 
 Marking the complete statement, and running it with \ekey{M-h r} will save the
 theorem under the name \lstinline{gaussian_sum}.
