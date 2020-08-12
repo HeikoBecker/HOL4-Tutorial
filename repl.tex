@@ -1,0 +1,47 @@
+\section{Interacting with the HOL4 REPL}
+
+The HOL4 REPL is an extended version of the polyML~\cite{polymlweb} REPL, and
+behaves like the REPL's of other interpreted languages.
+After starting the HOL4 REPL, code is send with the keybinding \ekey{M-h r}.
+
+For example, type
+\begin{lstlisting}
+  3 + 5;
+\end{lstlisting}
+
+anywhere in the current script file, highlight it with emacs highlighting
+command (\ekey{C-space}, then arrow keys for marking) and send it to the REPL
+with \ekey{M-h r}.
+
+The REPL should print:
+\begin{lstlisting}[frame=single]
+> 3+5;
+val it = 8: int
+\end{lstlisting}
+
+All of the functionality of the polyML REPL, and in general, the Standard ML
+basis library (see e.g. \url{https://smlfamily.github.io/Basis/} for a reference)
+are available in the HOL4 REPL.
+Thus HOL4 supports creating and manipulating lists, strings, options, and
+simple I/O.
+
+As a quick point of reference, \autoref{tbl:keybindings} gives a short,
+executive summary of the most commonly used keybindings.
+If you are not familiar with using emacs in general, we recommend the built-in
+tutorial \ekey{C-h t}.
+
+\begin{table}
+  \centering
+\begin{tabular}{@{}cll@{}}
+  \toprule
+  Keybinding & \multicolumn{1}{c}{Effect} & \multicolumn{1}{c}{Remark}\\
+  \midrule
+  \ekey{M-h H} & Start a new HOL4 session & \\
+  \ekey{M-h r} & Send marked text to REPL & \\
+  \ekey{M-h g} & Start a new proof & Must be within a \texttt{Theorem}, \texttt{Proof} block\\
+  \ekey{M-h e} & Applies a tactic & Marked SML code must have type `tactic`\\
+  \ekey{M-h d} & Stop current interactive proof \\
+  \bottomrule
+\end{tabular}
+  \caption{Most common HOL4-mode keybindings}\label{tbl:keybindings}
+\end{table}

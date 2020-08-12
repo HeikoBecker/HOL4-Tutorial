@@ -1,0 +1,50 @@
+\section{Introduction/Setup}
+%
+As with any programming language, picking up an ITP system first requires
+installing the system.
+In this guide we use the HOL4~\cite{HOL4web} theorem prover.
+The guide also uses a tool called \emph{Lassie}, equipping HOL4 with training
+wheels.
+
+To follow this guide, \texttt{polyML}, \texttt{Apache Ant}, and \texttt{ruby}
+must be installed.
+For \texttt{polyML}, we recommend downloading the latest version from git
+(\url{https://github.com/polyml/polyml}).
+Both \texttt{Apache Ant}, and \texttt{ruby} can be installed through the system
+package manager.
+We provide a setup script that makes sure all the dependencies are installed,
+and downloads and installs the latest versions of HOL4 and Lassie with this
+guide (\url{https://people.mpi-sws.org/~hbecker/setupHOL4.sh}).
+Running the setup script temporarily sets the variables \texttt{HOLDIR}, and
+\texttt{LASSIEDIR} to the directories where HOL4 and Lassie have been installed.
+To use both tools later, these variables must be be configured permanently
+before running HOL4.
+
+\subsection{Running HOL4}
+
+We will explain how to interact using HOL4 using the emacs editor.
+There also exist plugins for the vim, and Sublime text editors, and the overall
+interaction is the same, only the keybindings may change.
+
+To interact with HOL4 within emacs, it suffices to append the following lines to
+the emacs configuration file:
+\begin{lstlisting}
+(load-file "<HOL install dir>/tools/hol-unicode.el")
+(load-file "<HOL install dir>/tools/hol-input.el")
+(load-file "<HOL install dir>/tools/holscript-mode.el")
+(load-file "<HOL install dir>/tools/hol-mode.el")
+\end{lstlisting}
+
+After loading the files, respectively restarting emacs, HOL4 files will by
+default open in the HOL4 mode.
+
+In general, HOL4 files always end with the suffix \texttt{Script.sml}.
+For example, a theory about natural numbers is called
+\texttt{naturalNumbersScript.sml}
+In HOL4 speak, files ending with \texttt{Script.sml} are called \emph{script files}.
+
+To interact with HOL4 we must first star ta read-eval-print loop (REPL), similar
+to interpreter of programming languages like ruby or python.
+After opening a script file in emacs, HOL4 is started by presssing
+\ekey{M-h H}.
+emacs will then interactively prompt for a position of the HOL4 REPL.
