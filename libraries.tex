@@ -179,6 +179,7 @@ it with Lassie.
 The textbook version of the proof is done by contradiction, so we perform the
 same step in HOL4: \lstinline{nltac `suppose not;`}.
 After running the tactic with \ekey{M-h e} the REPL shows the following goal state:
+%
 \begin{lstlisting}[frame=single, mathescape=true]
 > OK..
 1 subgoal:
@@ -190,9 +191,11 @@ val it =
 
    : proof
 \end{lstlisting}
+
 The first assumption starts with an existential quantifier, from which we can
 obtain the witness. Therefore we next call into the simplifier to automatically
 take care of this with \lstinline{nltac `simplify;`} leaving us with
+%
 \begin{lstlisting}[frame=single, mathescape=true]
 > > > > > # # OK..
 1 subgoal:
@@ -214,22 +217,20 @@ a prime factorization\footnote{We have to exclude $1$ here because our definitio
 Before continuing the proof, we prove a theorem that for an arbitrary natural
 number $n$ provides us with a prime factor of it.
 To this end we first drop the current goal with \ekey{M-h d} and start proving:
+%
 \begin{lstlisting}
 Theorem PRIME_FACTOR:
   !n . ~(n = 1) ==> ?p . prime p /\ p divides n
 Proof
-  nltac `
-    Complete Induction on 'n';
-    rewrite [];
-    perform a case split for 'prime n';`
-  >- (
-    nltac `
-      follows from [DIVIDES_REFL];`)
-  >- (
-    nltac `
-      show '?x. x divides n and x <> 1 and x <> n' using (follows from [prime_def]);
-      follows from [LESS_OR_EQ, PRIME_2, DIVIDES_LE, DIVIDES_TRANS, DIVIDES_0];`)
-QED
+  LassieLib.nltac `
+    Complete Induction on 'n'.
+    rewrite [].
+    perform a case split for 'prime n'.
+    Goal 1. follows from [DIVIDES_REFL]. End.
+    Goal 1.
+      show '? x. x divides n and x <> 1 and x <> n' using (follows from [prime_def]).
+      follows from [LESS_OR_EQ, PRIME_2, DIVIDES_LE, DIVIDES_TRANS, DIVIDES_0].
+    End.`
 \end{lstlisting}
 
 The theorem can be immediately loaded by running \ekey{M-h r} over the complete
@@ -237,8 +238,8 @@ text.
 However, we recommend stepping through the \lstinline{nltac} steps one-by-one
 with \ekey{M-h e} after starting an interactive proof with \ekey{M-h g}.
 
-One particular thing to note here is that this proof uses plain HOL4 tactic
-syntax for the first time.
+One particular thing to note here is that this is the first proof that
+explicitly mentions subgoals in Lassie.
 After performing a case split on whether $n$ is prime or not
 (\lstinline{perform a case split for 'prime n';}) HOL4 leaves us with two
 subgoals to prove:
@@ -264,8 +265,10 @@ val it =
    : proof
 \end{lstlisting}
 
-The SML level \lstinline{>- ( ... )} then denotes a proof of a subgoal, each
-showing only one of the two.
+Here, the first subgoal ($\exists \texttt{p}. \texttt{prime p} \wedge \texttt{p divides n}$)
+is solved first, with the natural language command \lstinline{Goal 1}.
+Alternatively, we can say that we want to prove first the goal where \texttt{prime n} holds with
+\lstinline{Goal 'prime n'}.
 
 Having shown the theorem \lstinline{PRIME_FACTOR} we can go back to proving
 euclids theorem:
