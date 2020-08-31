@@ -86,39 +86,39 @@ lemmas that will come in handy later.
 Theorem DIVIDES_0:
   ! x . x divides 0
 Proof
-  nltac `trivial using [divides_def, MULT_CLAUSES];`
+  nltac `trivial using [divides_def, MULT_CLAUSES].`
 QED
 
 Theorem DIVIDES_ZERO:
   ! x . (0 divides x) = (x = 0)
 Proof
-  nltac `follows from [divides_def, MULT_CLAUSES];`
+  nltac `follows from [divides_def, MULT_CLAUSES].`
 QED
 
 Theorem DIVIDES_ONE:
   ! x . (x divides 1) = (x = 1)
 Proof
-  nltac `follows from [divides_def, MULT_CLAUSES, MULT_EQ_1];`
+  nltac `follows from [divides_def, MULT_CLAUSES, MULT_EQ_1].`
 QED
 
 Theorem DIVIDES_REFL:
   ! x . x divides x
 Proof
-  nltac `follows from [divides_def, MULT_CLAUSES];`
+  nltac `follows from [divides_def, MULT_CLAUSES].`
 QED
 
 Theorem DIVIDES_TRANS:
   ! a b c . a divides b /\ b divides c ==> a divides c
 Proof
-  nltac `follows from [divides_def, MULT_ASSOC];`
+  nltac `follows from [divides_def, MULT_ASSOC].`
 QED
 \end{lstlisting}
 
 Theorems \lstinline{DIVIDES_0, DIVIDES_ZERO}, and \lstinline{DIVIDES_ONE} show
 simple base cases for predicate \lstinline{divides}.
 As these follow straight-forwardly from the definition, the Lassie proof is just
-\lstinline{nltac `follows from [divides_def, MULT_CLAUSES];`}, resp.
-\lstinline{nltac `follows from [divides_def, MULT_CLAUSES, MULT_EQ_-1];`}.
+\lstinline{nltac `follows from [divides_def, MULT_CLAUSES].`}, resp.
+\lstinline{nltac `follows from [divides_def, MULT_CLAUSES, MULT_EQ_-1].`}.
 
 Similarly, one proves theorems about the relation between $+, *$ and $\leq$ and
 \lstinline{divides}:
@@ -127,37 +127,37 @@ Similarly, one proves theorems about the relation between $+, *$ and $\leq$ and
 Theorem DIVIDES_ADD:
   ! d a b . d divides a /\ d divides b ==> d divides (a + b)
 Proof
-  nltac `follows from [divides_def, LEFT_ADD_DISTRIB];`
+  nltac `follows from [divides_def, LEFT_ADD_DISTRIB].`
 QED
 
 Theorem DIVIDES_SUB:
   !d a b . d divides a /\ d divides b ==> d divides (a - b)
 Proof
-  nltac `follows from [divides_def, LEFT_SUB_DISTRIB];`
+  nltac `follows from [divides_def, LEFT_SUB_DISTRIB].`
 QED
 
 Theorem DIVIDES_ADDL:
   !d a b . d divides a /\ d divides (a + b) ==> d divides b
 Proof
-  nltac `follows from [ADD_SUB, ADD_SYM, DIVIDES_SUB];`
+  nltac `follows from [ADD_SUB, ADD_SYM, DIVIDES_SUB].`
 QED
 
 Theorem DIVIDES_LMUL:
   !d a x . d divides a ==> d divides (x * a)
 Proof
-  nltac `follows from [divides_def, MULT_ASSOC, MULT_SYM];`
+  nltac `follows from [divides_def, MULT_ASSOC, MULT_SYM].`
 QED
 
 Theorem DIVIDES_RMUL:
   !d a x . d divides a ==> d divides (a * x)
 Proof
-  nltac `follows from [MULT_SYM,DIVIDES_LMUL];`
+  nltac `follows from [MULT_SYM,DIVIDES_LMUL].`
 QED
 
 Theorem DIVIDES_LE:
   !m n . m divides n ==> m <= n \/ (n = 0)
 Proof
-  nltac `rewrite [divides_def]; trivial using [];`
+  nltac `rewrite [divides_def]. trivial using [].`
 QED
 \end{lstlisting}
 
@@ -177,7 +177,7 @@ QED
 After starting the interactive proof with \ekey{M-h g}, we can start exploring
 it with Lassie.
 The textbook version of the proof is done by contradiction, so we perform the
-same step in HOL4: \lstinline{nltac `suppose not;`}.
+same step in HOL4: \lstinline{nltac `suppose not.`}.
 After running the tactic with \ekey{M-h e} the REPL shows the following goal state:
 %
 \begin{lstlisting}[frame=single, mathescape=true]
@@ -194,7 +194,7 @@ val it =
 
 The first assumption starts with an existential quantifier, from which we can
 obtain the witness. Therefore we next call into the simplifier to automatically
-take care of this with \lstinline{nltac `simplify;`} leaving us with
+take care of this with \lstinline{nltac `simplify.`} leaving us with
 %
 \begin{lstlisting}[frame=single, mathescape=true]
 > > > > > # # OK..
@@ -233,7 +233,7 @@ Proof
     End.`
 \end{lstlisting}
 
-The theorem can be immediately loaded by running \ekey{M-h r} over the complete
+The theorem can be immediately loaded by running \ekey{M-h M-r} over the complete
 text.
 However, we recommend stepping through the \lstinline{nltac} steps one-by-one
 with \ekey{M-h e} after starting an interactive proof with \ekey{M-h g}.
@@ -241,7 +241,7 @@ with \ekey{M-h e} after starting an interactive proof with \ekey{M-h g}.
 One particular thing to note here is that this is the first proof that
 explicitly mentions subgoals in Lassie.
 After performing a case split on whether $n$ is prime or not
-(\lstinline{perform a case split for 'prime n';}) HOL4 leaves us with two
+(\lstinline{perform a case split for 'prime n'.}) HOL4 leaves us with two
 subgoals to prove:
 
 \begin{lstlisting}[frame=single]
@@ -276,7 +276,7 @@ euclids theorem:
 Theorem euclid:
   !n . ?p . n < p /\ prime p
 Proof
-  nltac `suppose not; simplify;`
+  nltac `suppose not. simplify.`
 QED
 \end{lstlisting}
 
@@ -288,16 +288,16 @@ smaller than $n$ is a divisor of $!n$, and theorem \lstinline{DIVIDES_ADDL}.
 The full proofscript becomes:
 \begin{lstlisting}[mathescape=true]
 nltac `
-  suppose not; simplify;
-  we can derive 'FACT n + 1 <> 1' from [FACT_LESS, neq_zero];
-  thus PRIME_FACTOR for 'FACT n + 1';
-  we further know '?q. prime q and q divides (FACT n + 1)';
-  show 'q <= n' using (suppose not TACCOMB$\$$THEN trivial using [NOT_LESS_EQUAL]);
-  show '0 < q' using (follows from [PRIME_POS]);
-  show 'q divides FACT n' using (follows from [DIVIDES_FACT]);
-  show 'q=1' using (follows from [DIVIDES_ADDL, DIVIDES_ONE]);
-  show 'prime 1' using (simplify);
-  follows from [NOT_PRIME_1];`
+  suppose not. simplify.
+  we can derive 'FACT n + 1 <> 1' from [FACT_LESS, neq_zero].
+  thus PRIME_FACTOR for 'FACT n + 1'.
+  we further know '?q. prime q and q divides (FACT n + 1)'.
+  show 'q <= n' using (suppose not THEN trivial using [NOT_LESS_EQUAL]).
+  show '0 < q' using (follows from [PRIME_POS]).
+  show 'q divides FACT n' using (follows from [DIVIDES_FACT]).
+  show 'q=1' using (follows from [DIVIDES_ADDL, DIVIDES_ONE]).
+  show 'prime 1' using (simplify).
+  follows from [NOT_PRIME_1].`
 \end{lstlisting}
 
 We recommend stepping through each step one by one and observing the changes to
@@ -309,3 +309,7 @@ This directive tells HOL4 to export the defined functions and proven theorems
 into a file \texttt{gaussTheory.sml} which can be used by future developments.
 The file \texttt{gaussTheory.sig} gives an overview of the included theorems and
 definitions in a human readable format.
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

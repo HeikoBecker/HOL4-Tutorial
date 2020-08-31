@@ -14,7 +14,7 @@ Both \texttt{Apache Ant}, and \texttt{ruby} can be installed through the system
 package manager.
 We provide a setup script that makes sure all the dependencies are installed,
 and downloads and installs the latest versions of HOL4 and Lassie with this
-guide (\url{https://people.mpi-sws.org/~hbecker/setupHOL4.sh}).
+guide (\autoref{sec:script}).
 Running the setup script temporarily sets the variables \texttt{HOLDIR}, and
 \texttt{LASSIEDIR} to the directories where HOL4 and Lassie have been installed.
 To use both tools later, these variables must be be configured permanently
@@ -26,6 +26,14 @@ We will explain how to interact using HOL4 using the emacs editor.
 There also exist plugins for the vim, and Sublime text editors, and the overall
 interaction is the same, only the keybindings may change.
 
+When Emacs is started, it normally tries to load a Lisp program from an
+initialization file, or init file for short. This file, if it exists, specifies
+how to initialize Emacs for you. Emacs looks for your init file using the
+filenames \texttt{~/.emacs}, \texttt{~/.emacs.el}, and
+\texttt{~/.emacs.d/init.el}; you can choose to use any one of these three names.
+Here, \texttt{~/} stands for your home directory
+(\url{https://www.gnu.org/software/emacs/manual/html_node/emacs/Init-File.html}).
+
 To interact with HOL4 within emacs, it suffices to append the following lines to
 the emacs configuration file:
 \begin{lstlisting}
@@ -34,17 +42,35 @@ the emacs configuration file:
 (load-file "<HOL install dir>/tools/holscript-mode.el")
 (load-file "<HOL install dir>/tools/hol-mode.el")
 \end{lstlisting}
+\noindent Here, \lstinline{<HOL install dir>} is the same path as the one
+to which \texttt{HOLDIR} is set.
 
 After loading the files, respectively restarting emacs, HOL4 files will by
 default open in the HOL4 mode.
 
 In general, HOL4 files always end with the suffix \texttt{Script.sml}.
-For example, a theory about natural numbers is called
+For example, a theory about natural numbers would be called
 \texttt{naturalNumbersScript.sml}
 In HOL4 speak, files ending with \texttt{Script.sml} are called \emph{script files}.
 
 To interact with HOL4 we must first star ta read-eval-print loop (REPL), similar
 to interpreter of programming languages like ruby or python.
 After opening a script file in emacs, HOL4 is started by presssing
-\ekey{M-h H}.
-emacs will then interactively prompt for a position of the HOL4 REPL.
+first the \texttt{Alt} key together with \texttt{h}, then \texttt{H}.
+In emacs this keybinding is abbreviated as \ekey{M-h H}, where \ekey{M} refers
+to the \texttt{Alt} key\footnote{The \ekey{M} originates from the fact that
+  emacs users refer to the \ekey{Alt} key as \emph{Meta}}.
+After pressing the keybinding, emacs interactively prompts for a position of
+the HOL4 REPL (the prompt reads \lstinline{HOL buffer position:}).
+Possible options are \texttt{vertical}, \texttt{horizontal}, and
+\texttt{new-frame}.
+The first two split the current either vertically or horizontally to show the
+HOL4 REPL.
+Option \texttt{new-frame} will open the REPL in a separate window (as
+\emph{frame} is ``emacs speak'' for windows).
+For users with a single monitors, we recommend \texttt{horizontal}, and if two
+or more monitors are available, \texttt{new-frame}.
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

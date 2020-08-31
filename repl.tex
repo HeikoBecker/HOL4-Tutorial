@@ -2,16 +2,26 @@
 
 The HOL4 REPL is an extended version of the polyML~\cite{polymlweb} REPL, and
 behaves like the REPL's of other interpreted languages.
-After starting the HOL4 REPL, code is send with the keybinding \ekey{M-h r}.
+In general, it is recommend to first open a script file before starting
+the REPL.
+It does not matter where the script file is placed, apart from it not being
+located inside \texttt{HOLDIR}.
+Once a script file (e.g. \texttt{tutorialScript.sml}) has been opened, and the
+REPL has been started with \ekey{M-h H} (\ekey{Alt} and \ekey{h}, then \ekey{H}),
+one can send HOL4 code to the REPL with the keybinding \ekey{M-h M-r}
+(pressing \ekey{Alt} and \ekey{h}, then \ekey{Alt} and \ekey{r}).
 
 For example, type
 \begin{lstlisting}
   3 + 5;
 \end{lstlisting}
 
-anywhere in the current script file, highlight it with emacs highlighting
-command (\ekey{C-space}, then arrow keys for marking) and send it to the REPL
-with \ekey{M-h r}.
+anywhere in the currently openend script file.
+Sending is then done by first highlighting the code with emacs using \ekey{C-space}.
+Here, \ekey{C} stands for \ekey{Control}, so to start marking text, press
+\ekey{Control} together with the \ekey{space} key.
+The arrow keys are used for marking the code to be send to the REPL, and once it
+has been completely selected, it suffices to press \ekey{M-h M-r}.
 
 The REPL should print:
 \begin{lstlisting}[frame=single]
@@ -37,7 +47,7 @@ tutorial \ekey{C-h t}.
   Keybinding & \multicolumn{1}{c}{Effect} & \multicolumn{1}{c}{Remark}\\
   \midrule
   \ekey{M-h H} & Start a new HOL4 session & \\
-  \ekey{M-h r} & Send marked text to REPL & \\
+  \ekey{M-h M-r} & Send marked text to REPL & \\
   \ekey{M-h g} & Start a new proof & Must be within a \texttt{Theorem}, \texttt{Proof} block\\
   \ekey{M-h e} & Applies a tactic & Marked SML code must have type `tactic`\\
   \ekey{M-h d} & Stop current interactive proof \\
@@ -45,3 +55,7 @@ tutorial \ekey{C-h t}.
 \end{tabular}
   \caption{Most common HOL4-mode keybindings}\label{tbl:keybindings}
 \end{table}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

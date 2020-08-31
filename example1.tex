@@ -25,10 +25,11 @@ named \lstinline{f_def}.
 Alternatively, HOL4 also supports defining a function by a system of equations,
 moving the \texttt{case} expression of the \lstinline{sum} function to the
 outside:
-\begin{lstlisting}
+%
+\begin{lstlisting}[float,floatplacement=H]
 Definition sumEq_def:
   sumEq 0 = 0 /\
-  sumEq n = n + sum (n-1)
+  sumEq n = n + sumEq (n-1)
 End
 \end{lstlisting}
 
@@ -96,12 +97,12 @@ interactively.
 The gaussian sum is the standard example for proofs by induction in math classes.
 Following this example, we start the proof with
 \begin{lstlisting}
-nltac `Induction on 'n';`
+nltac `Induction on 'n'.`
 \end{lstlisting}
 
 Here, \lstinline{nltac} is a Lassie function that parses natural language and
 translates it into a HOL4 tactic.
-The parameter \lstinline{`Induction on 'n';`} is the natural language
+The parameter \lstinline{`Induction on 'n'.`} is the natural language
 description of the tactic used.
 To apply the tactic, the line must be marked and run with \ekey{M-h e}.
 After running the code, the HOL4 REPL shows
@@ -144,14 +145,14 @@ We will show in \autoref{subsec:tipsAndTricks} how one can get rid of this in ce
 As for a pen-and-paper proof, the first step on the induction step is to
 simplify:
 \begin{lstlisting}
-nltac `simplify with [sum_def, GSYM ADD_DIV_ADD_DIV, GSYM DIV2_def];`
+nltac `simplify with [sum_def, GSYM ADD_DIV_ADD_DIV, GSYM DIV2_def].`
 \end{lstlisting}
 
 Here, \lstinline{ADD_DIV_ADD_DIV} and \lstinline{DIV2_def} are theorems from the
 HOL4 standard library used to enrich the simplifier with the additional
 knowledge.
 To find out their statements, mark the theorem names only, and send them to the
-REPL with \ekey{M-h r}.
+REPL with \ekey{M-h M-r}.
 Sending \lstinline{GSYM} to the REPL shows that the function has type
 \lstinline{:thm -> thm}, meaning that it takes a theorem as input and returns a
 theorem.
@@ -185,16 +186,16 @@ of division by two.
 Applying the following tactics step-by-step closes the proof:
 
 \begin{lstlisting}
-nltac `it suffices to show that the arguments are equal;`
+nltac `it suffices to show that the arguments are equal.`
 nltac `show 'SUC n * (SUC n + 1) = (SUC n + 1) + n * (SUC n + 1)'
-         using (simplify with [MULT_CLAUSES]);`
-nltac `simplify;`
-nltac `show 'n * (n + 1) = SUC n * n' using (trivial using [MULT_CLAUSES, MULT_SYM]);`
-nltac `simplify;`
+         using (simplify with [MULT_CLAUSES]).`
+nltac `simplify.`
+nltac `show 'n * (n + 1) = SUC n * n' using (trivial using [MULT_CLAUSES, MULT_SYM]).`
+nltac `simplify.`
 \end{lstlisting}
 
 \begin{sloppypar}
-The natural language tactic \lstinline{`show 'SUC n * (SUC n + 1) = (SUC n + 1) + n * (SUC n + 1)' using (simplify with [MULT_CLAUSES]);`}
+The natural language tactic \lstinline{`show 'SUC n * (SUC n + 1) = (SUC n + 1) + n * (SUC n + 1)' using (simplify with [MULT_CLAUSES]).`}
 shows another feature of HOL4:
 We can extend the list of assumptions with the theorem mentioned after
 \lstinline{show}.
@@ -245,17 +246,21 @@ Theorem gaussian_sum:
   $\forall$ n. sum n = (n * (n + 1)) DIV 2
 Proof
   nltac `
-   Induction on 'n'; simplify;
-   simplify with [GSYM ADD_DIV_ADD_DIV, GSYM DIV2_def];
-   it suffices to show that the arguments are equal;
-   show 'SUC n * (SUC n + 1) = (SUC n + 1) + n * (SUC n + 1)' using (simplify with [MULT_CLAUSES]);
-   simplify;
-   show 'n * (n + 1) = SUC n * n' using (trivial using [MULT_CLAUSES, MULT_SYM]);
-   simplify;`
+   Induction on 'n'. simplify.
+   simplify with [GSYM ADD_DIV_ADD_DIV, GSYM DIV2_def].
+   it suffices to show that the arguments are equal.
+   show 'SUC n * (SUC n + 1) = (SUC n + 1) + n * (SUC n + 1)' using (simplify with [MULT_CLAUSES]).
+   simplify.
+   show 'n * (n + 1) = SUC n * n' using (trivial using [MULT_CLAUSES, MULT_SYM]).
+   simplify.`
 QED
 \end{lstlisting}
 \caption{Complete proof of the gaussian sum using Lassie}\label{fig:gaussProof}
 \end{figure}
 
-Marking the complete statement, and running it with \ekey{M-h r} will save the
+Marking the complete statement, and running it with \ekey{M-h M-r} will save the
 theorem under the name \lstinline{gaussian_sum}.
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
