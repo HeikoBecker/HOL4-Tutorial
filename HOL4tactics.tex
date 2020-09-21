@@ -37,11 +37,11 @@ Sending the first step from the Lassie proof (\lstinline{Induction on 'n'.}) wit
 \begin{lstlisting}[frame=single]
 Induct_on ` n `
  >- (
- sumEq 0 = 0 * (0 + 1) DIV 2)
+ sum 0 = 0 * (0 + 1) DIV 2)
  >- (
-  0.  sumEq n = n * (n + 1) DIV 2
+  0.  sum n = n * (n + 1) DIV 2
  ------------------------------------
-      sumEq (SUC n) = SUC n * (SUC n + 1) DIV 2)
+      sum (SUC n) = SUC n * (SUC n + 1) DIV 2)
 \end{lstlisting}
 
 This tells us that the HOL4 equivalent to Lassies ``Induction on 'n''' is the
@@ -57,19 +57,19 @@ A HOL4 tactic proof however requires manually putting the tactics together.
 Here we see \lstinline{>-} which combines a tactic (\lstinline{Induct_on})
 with a tactic solving a single subgoal.
 
-If we send the next step, \lstinline{use [sumEq_def] to simplify.}, from the Lassie proof, the REPL shows
+If we send the next step, \lstinline{use [sum_def] to simplify.}, from the Lassie proof, the REPL shows
 %
 \begin{lstlisting}[frame=single]
 Induct_on ` n `
  >- (
  fs [ sum_def ])
  >- (
-  0.  sumEq n = n * (n + 1) DIV 2
+  0.  sum n = n * (n + 1) DIV 2
  ------------------------------------
-      sumEq (SUC n) = SUC n * (SUC n + 1) DIV 2)
+      sum (SUC n) = SUC n * (SUC n + 1) DIV 2)
 \end{lstlisting}
 
-The tactic \lstinline{fs [ sumEq_def ]} has been used by Lassie to solve the first subgoal
+The tactic \lstinline{fs [ sum_def ]} has been used by Lassie to solve the first subgoal
 of the proof, but the second subgoal remained unchanged.
 If we want to also simplify the second goal, we have to send the Lassie step again,
 leaving us with
@@ -77,10 +77,10 @@ leaving us with
 \begin{lstlisting}[frame=single]
 Induct_on ` n `
  >- (
- fs [ sumEq_def ])
+ fs [ sum_def ])
  >- (
- fs [ sumEq_def ] >>
-   0.  sumEq n = n * (n + 1) DIV 2
+ fs [ sum_def ] >>
+   0.  sum n = n * (n + 1) DIV 2
   ------------------------------------
        SUC n + n * (n + 1) DIV 2 = SUC n * (SUC n + 1) DIV 2)
 \end{lstlisting}
