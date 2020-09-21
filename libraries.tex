@@ -17,8 +17,8 @@ and load theorems that come with the HOL4 theorem prover.
 We do so by running
 
 \begin{lstlisting}
-open BasicProvers Defn HolKernel Parse Conv SatisfySimps Tactic  boolTheory
-  bossLib arithmeticTheory;
+open BasicProvers Defn HolKernel Parse Conv SatisfySimps Tactic monadsyntax
+     boolTheory bossLib arithmeticTheory;
 
 open LassieLib arithTacticsLib;
 
@@ -36,6 +36,8 @@ To prevent errors, the file in which we store the theory has to be called
 \lstinline{euclidScript.sml}.
 If this correspondance between the file name and theory name is ignored,
 HOL4 will fail to build the theory later.
+As in the previous section, we recommend implementing file \lstinline{euclidScript.sml}
+in the directory \texttt{\$LASSIEDIR/examples}.
 We load the jargon with \lstinline{val _ = LassieLib.loadJargon "Arithmetic";}.
 
 \subsection{Basic Definitions}
@@ -83,42 +85,43 @@ version of \lstinline{p} being prime if it can only be divided by $1$ and itself
 Before proving euclid's theorem itself, we start by proving some infrastructural
 lemmas that will come in handy later.
 \begin{lstlisting}
+
 Theorem DIVIDES_0:
   ! x . x divides 0
 Proof
-  nltac `trivial using [divides_def, MULT_CLAUSES].`
+  nltac `[divides_def, MULT_CLAUSES] solves the goal.`
 QED
 
 Theorem DIVIDES_ZERO:
   ! x . (0 divides x) = (x = 0)
 Proof
-  nltac `follows from [divides_def, MULT_CLAUSES].`
+  nltac `[divides_def, MULT_CLAUSES] solves the goal.`
 QED
 
 Theorem DIVIDES_ONE:
   ! x . (x divides 1) = (x = 1)
 Proof
-  nltac `follows from [divides_def, MULT_CLAUSES, MULT_EQ_1].`
+  nltac `[divides_def, MULT_CLAUSES, MULT_EQ_1] solves the goal.`
 QED
 
 Theorem DIVIDES_REFL:
   ! x . x divides x
 Proof
-  nltac `follows from [divides_def, MULT_CLAUSES].`
+  nltac `[divides_def, MULT_CLAUSES] solves the goal.`
 QED
 
 Theorem DIVIDES_TRANS:
   ! a b c . a divides b /\ b divides c ==> a divides c
 Proof
-  nltac `follows from [divides_def, MULT_ASSOC].`
+  nltac `[divides_def, MULT_ASSOC] solves the goal.`
 QED
 \end{lstlisting}
 
 Theorems \lstinline{DIVIDES_0, DIVIDES_ZERO}, and \lstinline{DIVIDES_ONE} show
 simple base cases for predicate \lstinline{divides}.
 As these follow straight-forwardly from the definition, the Lassie proof is just
-\lstinline{nltac `follows from [divides_def, MULT_CLAUSES].`}, resp.
-\lstinline{nltac `follows from [divides_def, MULT_CLAUSES, MULT_EQ_-1].`}.
+\lstinline{nltac `[divides_def, MULT_CLAUSES] solves the goal.`}, resp.
+\lstinline{nltac `[divides_def, MULT_CLAUSES, MULT_EQ_-1] solves the goal.`}.
 
 Similarly, one proves theorems about the relation between $+, *$ and $\leq$ and
 \lstinline{divides}:
@@ -127,37 +130,37 @@ Similarly, one proves theorems about the relation between $+, *$ and $\leq$ and
 Theorem DIVIDES_ADD:
   ! d a b . d divides a /\ d divides b ==> d divides (a + b)
 Proof
-  nltac `follows from [divides_def, LEFT_ADD_DISTRIB].`
+  nltac `[divides_def, LEFT_ADD_DISTRIB] solves the goal.`
 QED
 
 Theorem DIVIDES_SUB:
   !d a b . d divides a /\ d divides b ==> d divides (a - b)
 Proof
-  nltac `follows from [divides_def, LEFT_SUB_DISTRIB].`
+  nltac `[divides_def, LEFT_SUB_DISTRIB] solves the goal.`
 QED
 
 Theorem DIVIDES_ADDL:
   !d a b . d divides a /\ d divides (a + b) ==> d divides b
 Proof
-  nltac `follows from [ADD_SUB, ADD_SYM, DIVIDES_SUB].`
+  nltac `[ADD_SUB, ADD_SYM, DIVIDES_SUB] solves the goal.`
 QED
 
 Theorem DIVIDES_LMUL:
   !d a x . d divides a ==> d divides (x * a)
 Proof
-  nltac `follows from [divides_def, MULT_ASSOC, MULT_SYM].`
+  nltac `[divides_def, MULT_ASSOC, MULT_SYM] solves the goal.`
 QED
 
 Theorem DIVIDES_RMUL:
   !d a x . d divides a ==> d divides (a * x)
 Proof
-  nltac `follows from [MULT_SYM,DIVIDES_LMUL].`
+  nltac `[MULT_SYM,DIVIDES_LMUL] solves the goal.`
 QED
 
 Theorem DIVIDES_LE:
   !m n . m divides n ==> m <= n \/ (n = 0)
 Proof
-  nltac `rewrite [divides_def]. trivial using [].`
+  nltac `rewrite [divides_def]. [] solves the goal.`
 QED
 \end{lstlisting}
 
@@ -292,12 +295,12 @@ nltac `
   we can derive 'FACT n + 1 <> 1' from [FACT_LESS, neq_zero].
   thus PRIME_FACTOR for 'FACT n + 1'.
   we further know '?q. prime q and q divides (FACT n + 1)'.
-  show 'q <= n' using (suppose not THEN trivial using [NOT_LESS_EQUAL]).
-  show '0 < q' using (follows from [PRIME_POS]).
-  show 'q divides FACT n' using (follows from [DIVIDES_FACT]).
-  show 'q=1' using (follows from [DIVIDES_ADDL, DIVIDES_ONE]).
+  show 'q <= n' using [NOT_LESS_EQUAL].
+  show '0 < q' using [PRIME_POS] .
+  show 'q divides FACT n' using [DIVIDES_FACT].
+  show 'q=1' using [DIVIDES_ADDL, DIVIDES_ONE].
   show 'prime 1' using (simplify).
-  follows from [NOT_PRIME_1].`
+  [NOT_PRIME_1] solves the goal.`
 \end{lstlisting}
 
 We recommend stepping through each step one by one and observing the changes to
@@ -306,8 +309,8 @@ the proof.
 After finishing the proof the theory development is ended by putting
 \lstinline{val _ = export_theory();} at the end of the file.
 This directive tells HOL4 to export the defined functions and proven theorems
-into a file \texttt{gaussTheory.sml} which can be used by future developments.
-The file \texttt{gaussTheory.sig} gives an overview of the included theorems and
+into a file \texttt{euclidTheory.sml} which can be used by future developments.
+The file \texttt{euclidTheory.sig} gives an overview of the included theorems and
 definitions in a human readable format.
 %%% Local Variables:
 %%% mode: latex

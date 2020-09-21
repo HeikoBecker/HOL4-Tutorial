@@ -12,36 +12,39 @@ The function we will define is a sum of natural numbers up to $n$,
 $\sum_{i=0}^n i$.
 A HOL4 definition looks like this:
 
-
 \begin{lstlisting}
-Definition sum_def:
-  sum n = if (n = 0) then 0 else n + sum (n-1)
+Definition sumFun_def:
+  sumFun (n:num) = if (n = 0) then 0 else n + sumFun (n-1)
 End
 \end{lstlisting}
 
 The \lstinline{Definition} and \lstinline{End} keyword tell the REPL that we
 define a HOL4 function and mark its end.
-In the REPL, \lstinline{sum_def} is the name of the definition, under which it
+In the REPL, \lstinline{sumFun_def} is the name of the definition, under which it
 can be accessed.
 As a convention, when defining function $f$ in HOL4, its definition should be
 named \lstinline{f_def}.
+The type annotation \lstinline{n:num} tells the HOL4 REPL to parse variable \texttt{n}
+as a natural number.
 
 Alternatively, HOL4 also supports defining a function by a system of equations,
 moving the \texttt{case} expression of the \lstinline{sum} function to the
 outside:
 %
 \begin{lstlisting}
-Definition sumEq_def:
-  sumEq 0 = 0 /\
-  sumEq n = n + sumEq (n-1)
+Definition sum_def:
+  sum 0 = 0 /\
+  sum (n:num) = n + sum (n-1)
 End
 \end{lstlisting}
 
-To avoid a name clash we have renamed the function into \lstinline{sumEq}.
+To avoid a name clash we have renamed the function into \lstinline{sum}.
 Choosing one definition over the other has different benefits and downsides.
 As a rule of thumb, it is recommended to choose the latter version, giving a
 system of equations if the function requires a top-level \texttt{case}
 expression.
+We will do the proof for the function \texttt{sum} here, and give a general
+guideline on when to prefer which version later in \autoref{subsec:tipsAndTricks}.
 
 As a simple, first example, we will prove a closed form for \lstinline{sum n}:
 \[
@@ -51,7 +54,7 @@ As a simple, first example, we will prove a closed form for \lstinline{sum n}:
 In HOL4 this theorem is stated as
 
 \begin{lstlisting}
-Theorem gaussian_sum:
+Theorem closed_form_sum:
   ! n. sum n = n * (n + 1) DIV 2
 Proof
 QED
@@ -60,7 +63,7 @@ QED
 Again, \lstinline{Theorem}, \lstinline{Proof}, and \lstinline{QED} are the
 keywords marking a theorem statement in the REPL and the indented line is
 the statement that we want to prove.
-Similar to a definition, the name \lstinline{gaussian_sum} is an identifier
+Similar to a definition, the name \lstinline{closed_form_sum} is an identifier
 which is used later to refer to the theorem statement proven in other proofs.
 This makes theorems first class citizens of the HOL4 REPL, also allowing
 functions to manipulate and inspect their statements.
@@ -92,8 +95,9 @@ with Lassie using natural language.
 To load Lassie and the natural language descriptions required for the proof,
 run
 \begin{lstlisting}
-open LassieLib;
+open LassieLib arithTacticsLib logicTacticsLib;
 val _ = LassieLib.loadJargon "Arithmetic";
+val _ = LassieLib.loadJargon "Logic";
 \end{lstlisting}
 interactively.
 
@@ -138,7 +142,7 @@ Intuitively \lstinline{SUC n} refers to the natural number after \lstinline{n},
 i.e. \lstinline{n + 1}.
 
 As for a pen-and-paper proof, the base case of the induction is trivial, and
-solved with the simple statement \lstinline{nltac `simplify with [sum_def].`},
+solved with the simple statement \lstinline{nltac `use [sum_def] to simplify.`},
 leaving us only with the induction step from above.
 In contrast to a pen-and-paper proof, we have to explicitly state that we
 simplify with the definition of our summation function (\lstinline{sum_def}).
@@ -148,20 +152,19 @@ We will show in \autoref{subsec:tipsAndTricks} how one can get rid of this in ce
 As for a pen-and-paper proof, the first step on the induction step is to
 simplify:
 \begin{lstlisting}
-nltac `simplify with [sum_def, GSYM ADD_DIV_ADD_DIV, GSYM DIV2_def].`
+nltac `use [sum_def, GSYM ADD_DIV_ADD_DIV] to simplify.`
 \end{lstlisting}
 
-Here, \lstinline{ADD_DIV_ADD_DIV} and \lstinline{DIV2_def} are theorems from the
-HOL4 standard library used to enrich the simplifier with the additional
-knowledge.
-To find out their statements, mark the theorem names only, and send them to the
+Here, \lstinline{ADD_DIV_ADD_DIV} is a theorem from the HOL4 standard library
+used to enrich the simplifier with the additional knowledge.
+To find out its statement, mark the theorem name only, and send it to the
 REPL with \ekey{M-h M-r}.
 Sending \lstinline{GSYM} to the REPL shows that the function has type
 \lstinline{:thm -> thm}, meaning that it takes a theorem as input and returns a
 theorem.
 Function \lstinline{GSYM} is a polyML function rotating an equality theorem,
 replacing equality $a = b$ with equality $b = a$.
-Sending \lstinline{GSYM DIV2_def} and \lstinline{DIV2_def} to the REPL, one can
+Sending \lstinline{GSYM ADD_DIV_ADD_DIV} and \lstinline{ADD_DIV_ADD_DIV} to the REPL, one can
 observe its effect easily.
 
 Using \lstinline{GSYM} can be useful from time to time as rewriting in HOL4 is
@@ -176,25 +179,23 @@ After applying the tactic, the REPL will show the subgoal that remains to be pro
 1 subgoal:
 val it =
 
-    0.  sum n = DIV2 (n * (n + 1))
+    0.  sum n = (n * (n + 1)) DIV 2
    ------------------------------------
-        DIV2 (2 * SUC n + n * (n + 1)) = DIV2 (SUC n * (SUC n + 1))
+        (2 * SUC n + n * (n + 1)) DIV 2 = SUC n * (SUC n + 1) DIV 2
 
    : proof
 \end{lstlisting}
 
-Here, function \lstinline{DIV2} is just an abbreviation alternative definition
-of division by two.
-
 Applying the following tactics step-by-step closes the proof:
 
 \begin{lstlisting}
-nltac `it suffices to show that the arguments are equal.`
-nltac `show 'SUC n * (SUC n + 1) = (SUC n + 1) + n * (SUC n + 1)'
-         using (simplify with [MULT_CLAUSES]).`
+nltac `'2 * SUC n + n * (n + 1) = SUC n * (SUC n + 1)' suffices to show the goal.`
+nltac `show 'SUC n * (SUC n + 1) = (SUC n + 1) + n * (SUC n + 1)' using (simplify with [MULT_CLAUSES]).`
 nltac `simplify.`
 nltac `show 'n * (n + 1) = SUC n * n' using (trivial using [MULT_CLAUSES, MULT_SYM]).`
-nltac `simplify.`
+nltac `'2 * SUC n = SUC n + SUC n' follows trivially.`
+nltac `'n * (SUC n + 1) = SUC n * n + n' follows trivially.`
+nltac `rewrite assumptions. simplify.`
 \end{lstlisting}
 
 \begin{sloppypar}
@@ -209,7 +210,7 @@ Before running the tactic, the state of the goal is
 1 subgoal:
 val it =
 
-    0.  sum n = DIV2 (n * (n + 1))
+    0.  sum n = n * (n + 1) DIV 2
    ------------------------------------
         2 * SUC n + n * (n + 1) = SUC n * (SUC n + 1)
 
@@ -222,7 +223,7 @@ and after running the tactic, the subgoal becomes
 1 subgoal:
 val it =
 
-    0.  sum n = DIV2 (n * (n + 1))
+    0.  sum n = n * (n + 1) DIV 2
     1.  SUC n * (SUC n + 1) = SUC n + 1 + n * (SUC n + 1)
    ------------------------------------
         2 * SUC n + n * (n + 1) = SUC n * (SUC n + 1)
@@ -249,13 +250,17 @@ Theorem closed_form_sum:
   $\forall$ n. sum n = (n * (n + 1)) DIV 2
 Proof
   nltac `
-   Induction on 'n'. simplify.
-   simplify with [GSYM ADD_DIV_ADD_DIV, GSYM DIV2_def].
-   it suffices to show that the arguments are equal.
+   Induction on 'n'.
+   use [sum_def] to simplify.
+   use [sum_def, GSYM ADD_DIV_ADD_DIV] to simplify.
+   use [sum_def, GSYM ADD_DIV_ADD_DIV] to simplify.
+   '2 * SUC n + n * (n + 1) = SUC n * (SUC n + 1)' suffices to show the goal.
    show 'SUC n * (SUC n + 1) = (SUC n + 1) + n * (SUC n + 1)' using (simplify with [MULT_CLAUSES]).
    simplify.
    show 'n * (n + 1) = SUC n * n' using (trivial using [MULT_CLAUSES, MULT_SYM]).
-   simplify.`
+   '2 * SUC n = SUC n + SUC n' follows trivially.
+   'n * (SUC n + 1) = SUC n * n + n' follows trivially.
+   rewrite assumptions. simplify.
 QED
 \end{lstlisting}
 \caption{Complete proof of the closed form for summing natural numbers until $n$ using Lassie}\label{fig:gaussProof}
