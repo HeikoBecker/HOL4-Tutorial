@@ -43,8 +43,7 @@ As a rule of thumb, it is recommended to choose the latter version, giving a
 system of equations if the function requires a top-level \texttt{case}
 expression.
 
-As a simple, first example, we will prove a closed form for \lstinline{sum n},
-known as the gaussian sum:
+As a simple, first example, we will prove a closed form for \lstinline{sum n}:
 \[
   \sum_{i=0}^{n} i = \frac{n * (n + 1)}{2}
 \]
@@ -98,7 +97,7 @@ val _ = LassieLib.loadJargon "Arithmetic";
 \end{lstlisting}
 interactively.
 
-The gaussian sum is the standard example for proofs by induction in math classes.
+The closed form is the standard example for proofs by induction in math classes.
 Following this example, we start the proof with
 \begin{lstlisting}
 nltac `Induction on 'n'.`
@@ -106,7 +105,6 @@ nltac `Induction on 'n'.`
 
 Here, \lstinline{nltac} is a Lassie function that parses natural language and
 translates it into a HOL4 tactic.
-\IG{how to get backticks in lstlisting? Whatever I have tried, I failed. (And I remember that was a problem for me when following the tutorial)}
 The parameter \lstinline{`Induction on 'n'.`} is the natural language
 description of the tactic used.
 To apply the tactic, the line must be marked and run with \ekey{M-h e}.
@@ -247,7 +245,7 @@ The full code for the theorem is given in \autoref{fig:gaussProof}.
 %
 \begin{figure}[t]
 \begin{lstlisting}[mathescape=true]
-Theorem gaussian_sum:
+Theorem closed_form_sum:
   $\forall$ n. sum n = (n * (n + 1)) DIV 2
 Proof
   nltac `
@@ -260,7 +258,7 @@ Proof
    simplify.`
 QED
 \end{lstlisting}
-\caption{Complete proof of the gaussian sum using Lassie}\label{fig:gaussProof}
+\caption{Complete proof of the closed form for summing natural numbers until $n$ using Lassie}\label{fig:gaussProof}
 \end{figure}
 
 Marking the complete statement, and running it with \ekey{M-h M-r} will save the
