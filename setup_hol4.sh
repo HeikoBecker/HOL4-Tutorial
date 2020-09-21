@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Install Apache Ant, ruby
+apt install ant ruby2.7
+
 #FIXME: Change to your local installation/git repository folder
 BASEDIR=/opt/test/
 
@@ -19,7 +22,8 @@ cd $BASEDIR && \
 export HOLDIR=$BASEDIR/HOL/
 
 cd $BASEDIR && \
-    git clone https://gitlab.mpi-sws.org/AVA/lassie.git Lassie &&\
+    ##### REDACTED FOR DOUBLE-BIND, please find code in non-anonymous materials
+    echo "Redacted Lassie git installation for double-bind, please find code in non-anonymous materials"
     cd Lassie/sempre && ./pull-dependencies core interactive && ant core interactive
     cd $BASEDIR/Lassie/src && $HOLDIR/bin/Holmake
 
