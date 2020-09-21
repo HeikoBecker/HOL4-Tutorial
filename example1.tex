@@ -5,9 +5,13 @@ programming language.
 Next, we will define our first function in HOL4, and prove a first theorem about
 it.
 
-A common mathematical notation is $\sum_{i=0}^n f (i)$,
-summing the numbers from $0$ to $n$, and applying function $f$.
-We define a specialized version for $f (x) = x$ in HOL4:
+%A common mathematical notation is $\sum_{i=0}^n f (i)$,
+%summing the numbers from $0$ to $n$, and applying function $f$.
+%We define a specialized version for $f (x) = x$ in HOL4:
+The function we will define is a sum of natural numbers up to $n$,
+$\sum_{i=0}^n i$.
+A HOL4 definition looks like this:
+
 
 \begin{lstlisting}
 Definition sum_def:
@@ -26,14 +30,14 @@ Alternatively, HOL4 also supports defining a function by a system of equations,
 moving the \texttt{case} expression of the \lstinline{sum} function to the
 outside:
 %
-\begin{lstlisting}[float,floatplacement=H]
+\begin{lstlisting}
 Definition sumEq_def:
   sumEq 0 = 0 /\
   sumEq n = n + sumEq (n-1)
 End
 \end{lstlisting}
 
-To avoid a name clash we have renamed the function into lstinline{sumEq}.
+To avoid a name clash we have renamed the function into \lstinline{sumEq}.
 Choosing one definition over the other has different benefits and downsides.
 As a rule of thumb, it is recommended to choose the latter version, giving a
 system of equations if the function requires a top-level \texttt{case}
@@ -102,6 +106,7 @@ nltac `Induction on 'n'.`
 
 Here, \lstinline{nltac} is a Lassie function that parses natural language and
 translates it into a HOL4 tactic.
+\IG{how to get backticks in lstlisting? Whatever I have tried, I failed. (And I remember that was a problem for me when following the tutorial)}
 The parameter \lstinline{`Induction on 'n'.`} is the natural language
 description of the tactic used.
 To apply the tactic, the line must be marked and run with \ekey{M-h e}.
@@ -132,7 +137,7 @@ First, we prove the base case \lstinline{sum 0 = 0 * (0 + 1) DIV 2}, then we
 show the induction step \lstinline{sum (n + 1) = (n + 1) * (n + 2) DIV 2}.
 Function \lstinline{SUC} is the HOL4 version of Peano's successor function.
 Intuitively \lstinline{SUC n} refers to the natural number after \lstinline{n},
-i.e \lstinline{n + 1}.
+i.e. \lstinline{n + 1}.
 
 As for a pen-and-paper proof, the base case of the induction is trivial, and
 solved with the simple statement \lstinline{nltac `simplify with [sum_def].`},
@@ -238,7 +243,7 @@ val it =
 
 To reuse the theorem later, and to make it automatically checkable by HOL4, we
 have to put the natural language into a single call to \lstinline{nltac}.
-The full code for the theorme is given in \autoref{fig:gaussProof}.
+The full code for the theorem is given in \autoref{fig:gaussProof}.
 %
 \begin{figure}[t]
 \begin{lstlisting}[mathescape=true]
