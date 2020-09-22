@@ -22,8 +22,8 @@ cd $BASEDIR && \
 export HOLDIR=$BASEDIR/HOL/
 
 cd $BASEDIR && \
-    ##### REDACTED FOR DOUBLE-BIND, please find code in non-anonymous materials
-    echo "Redacted Lassie git installation for double-bind, please find code in non-anonymous materials"
+    echo "Lassie cannot be installed without the non-anonymous material. Please put `non_anonymous.zip` in $BASEDIR and rerun the script."
+    unzip non_anonymous.zip -d Lassie
     cd Lassie/sempre && ./pull-dependencies core interactive && ant core interactive
     cd $BASEDIR/Lassie/src && $HOLDIR/bin/Holmake
 
