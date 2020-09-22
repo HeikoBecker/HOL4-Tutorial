@@ -26,5 +26,6 @@ cd $BASEDIR && \
     unzip non_anonymous.zip -d Lassie
     cd Lassie/sempre && ./pull-dependencies core interactive && ant core interactive
     cd $BASEDIR/Lassie/src && $HOLDIR/bin/Holmake
+    export TERM=xterm-color && cd $BASEDIR/Lassie/examples && $HOLDIR/bin/Holmake -j1
 
 echo "Please add the following lines to your shell configuration file:\n export HOLDIR=$BASEDIR/HOL/ \nexport LASSIEDIR=$BASEDIR/Lassie/"

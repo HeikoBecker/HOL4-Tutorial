@@ -26,6 +26,8 @@ As a convention, when defining function $f$ in HOL4, its definition should be
 named \lstinline{f_def}.
 The type annotation \lstinline{n:num} tells the HOL4 REPL to parse variable \texttt{n}
 as a natural number.
+To load the definition into the HOL4 REPL, mark it completely, including the \lstinline{Definition}
+keyword and the \lstinline{End} keyword, and send it to the REPL with \ekey{M-h M-r}.
 
 Alternatively, HOL4 also supports defining a function by a system of equations,
 moving the \texttt{case} expression of the \lstinline{sum} function to the
@@ -39,6 +41,8 @@ End
 \end{lstlisting}
 
 To avoid a name clash we have renamed the function into \lstinline{sum}.
+As for the definition of \lstinline{sumFun_def}, to send the definition to the REPL,
+mark it and send it with \ekey{M-h M-r}.
 Choosing one definition over the other has different benefits and downsides.
 As a rule of thumb, it is recommended to choose the latter version, giving a
 system of equations if the function requires a top-level \texttt{case}
@@ -95,7 +99,7 @@ with Lassie using natural language.
 To load Lassie and the natural language descriptions required for the proof,
 run
 \begin{lstlisting}
-open LassieLib arithTacticsLib logicTacticsLib;
+open LassieLib arithTacticsLib logicTacticsLib arithmeticTheory;
 val _ = LassieLib.loadJargon "Arithmetic";
 val _ = LassieLib.loadJargon "Logic";
 \end{lstlisting}
